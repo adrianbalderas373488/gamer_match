@@ -1,0 +1,3 @@
+.gamermatch button { cursor: pointer; }
+.gamermatch button:focus-visible,
+.gamermatch a:focus-visible { outline: 3px solid #7c3aed; outline-offset: 4px; }
