@@ -1,9 +1,144 @@
-// Día 2-3: datos de Discord, nivel y disponibilidad. Día 9-10: horas de Steam.
+import { useEffect, useState } from 'react'
+import { obtenerPerfil, actualizarPerfil } from '@/api/perfiles'
+import { useSesion } from '@/store/sesion'
+import { NIVELES, DIAS, HORARIOS } from '@/data/opciones'
+
 export default function Perfil() {
+  const usuario = useSesion((state) => state.usuario)
+  const [perfil, setPerfil] = useState(null)
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let activo = true
+
+    async function cargarPerfil() {
+      try {
+        const datos = await obtenerPerfil(usuario.id)
+        if (activo) setPerfil(datos)
+      } catch (error) {
+        if (activo) setError(error.message)
+      } finally {
+        if (activo) setCargando(false)
+      }
+    }
+
+    cargarPerfil()
+    return () => { activo = false }
+  }, [usuario.id])
+
   return (
-    <section aria-labelledby="titulo-perfil">
+    <section aria-labelledby="titulo-perfil" className="mx-auto max-w-2xl">
       <h2 id="titulo-perfil" className="mb-4 text-xl font-bold">Mi perfil</h2>
-      <p className="text-slate-600">Aquí irá tu perfil.</p>
+
+      {cargando && <p role="status">Cargando perfil...</p>}
+      {error && <p role="alert" className="text-red-700">Error: {error}</p>}
+      {perfil && (
+        <>
+          <div className="mb-6 flex items-center gap-4 rounded-xl border border-violet-200 bg-white p-4">
+            {perfil.avatar_url && (
+              <img src={perfil.avatar_url} alt="" className="h-16 w-16 rounded-full" />
+            )}
+            <div>
+              <p className="text-lg font-bold">{perfil.usuario}</p>
+              <p className="text-sm text-slate-600">Cuenta vinculada con Discord</p>
+            </div>
+          </div>
+          <FormularioPerfil perfil={perfil} onGuardado={setPerfil} />
+        </>
+      )}
     </section>
+  )
+}
+
+function FormularioPerfil({ perfil, onGuardado }) {
+  const [nivel, setNivel] = useState(perfil.nivel ?? '')
+  const [dias, setDias] = useState(perfil.disponibilidad?.dias ?? [])
+  const [horarios, setHorarios] = useState(perfil.disponibilidad?.horarios ?? [])
+  const [guardando, setGuardando] = useState(false)
+  const [mensaje, setMensaje] = useState(null)
+
+  function alternar(lista, setLista, valor) {
+    setLista(lista.includes(valor) ? lista.filter((v) => v !== valor) : [...lista, valor])
+  }
+
+  async function guardar(e) {
+    e.preventDefault()
+    setGuardando(true)
+    setMensaje(null)
+    try {
+      const actualizado = await actualizarPerfil(perfil.id, {
+        nivel: nivel || null,
+        disponibilidad: { dias, horarios },
+      })
+      onGuardado(actualizado)
+      setMensaje({ tipo: 'exito', texto: 'Perfil guardado.' })
+    } catch (error) {
+      setMensaje({ tipo: 'error', texto: error.message })
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  return (
+    <form onSubmit={guardar} className="space-y-6 rounded-xl border border-violet-200 bg-white p-4">
+      <div>
+        <label htmlFor="nivel" className="mb-2 block font-medium">Nivel</label>
+        <select
+          id="nivel"
+          value={nivel}
+          onChange={(e) => setNivel(e.target.value)}
+          className="block w-full rounded-md border border-slate-300 bg-white p-2"
+        >
+          <option value="">Selecciona tu nivel</option>
+          {NIVELES.map((n) => <option key={n} value={n}>{n}</option>)}
+        </select>
+      </div>
+
+      <fieldset>
+        <legend className="mb-2 font-medium">Días disponibles</legend>
+        <div className="flex flex-wrap gap-3">
+          {DIAS.map((dia) => (
+            <label key={dia} className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={dias.includes(dia)}
+                onChange={() => alternar(dias, setDias, dia)}
+              />
+              {dia}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend className="mb-2 font-medium">Horario</legend>
+        <div className="flex flex-wrap gap-3">
+          {HORARIOS.map((horario) => (
+            <label key={horario} className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={horarios.includes(horario)}
+                onChange={() => alternar(horarios, setHorarios, horario)}
+              />
+              {horario}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <button
+        type="submit"
+        disabled={guardando}
+        className="rounded-md bg-violet-700 px-4 py-2 text-white hover:bg-violet-800 disabled:opacity-60"
+      >
+        {guardando ? 'Guardando...' : 'Guardar perfil'}
+      </button>
+      {mensaje && (
+        <p role="status" className={mensaje.tipo === 'error' ? 'text-red-700' : 'text-green-700'}>
+          {mensaje.texto}
+        </p>
+      )}
+    </form>
   )
 }

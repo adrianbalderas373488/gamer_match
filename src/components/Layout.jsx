@@ -1,5 +1,7 @@
 import { NavLink, Outlet } from 'react-router'
-import { Gamepad2 } from 'lucide-react'
+import { Gamepad2, LogOut } from 'lucide-react'
+import { useSesion } from '@/store/sesion'
+import { cerrarSesion } from '@/api/auth'
 
 const enlaces = [
   { ruta: '/juegos', texto: 'Juegos' },
@@ -8,6 +10,10 @@ const enlaces = [
 ]
 
 export default function Layout() {
+  const usuario = useSesion((state) => state.usuario)
+  const datosDiscord = usuario?.user_metadata ?? {}
+  const nombre = datosDiscord.custom_claims?.global_name ?? datosDiscord.full_name ?? datosDiscord.name
+
   return (
     <div className="gamermatch min-h-screen bg-violet-50 text-slate-900">
       <header className="bg-violet-700 px-4 py-4 text-white">
@@ -31,6 +37,19 @@ export default function Layout() {
               ))}
             </ul>
           </nav>
+          <div className="flex items-center gap-3">
+            {datosDiscord.avatar_url && (
+              <img src={datosDiscord.avatar_url} alt="" className="h-8 w-8 rounded-full" />
+            )}
+            <span className="font-medium">{nombre}</span>
+            <button
+              type="button"
+              onClick={cerrarSesion}
+              className="flex items-center gap-1 rounded-md px-2 py-1 hover:bg-violet-600"
+            >
+              <LogOut aria-hidden="true" className="h-4 w-4" /> Salir
+            </button>
+          </div>
         </div>
       </header>
 
