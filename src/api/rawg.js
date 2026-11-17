@@ -15,6 +15,20 @@ function simplificarJuego(juego) {
   }
 }
 
+// Datos de un solo juego por su id de RAWG (null si no existe)
+export async function obtenerJuego(id) {
+  try {
+    if (!LLAVE) throw new Error('Falta VITE_RAWG_KEY')
+
+    const respuesta = await fetch(`https://api.rawg.io/api/games/${id}?key=${LLAVE}`)
+    if (respuesta.status === 404) return null
+    if (!respuesta.ok) throw new Error('No se pudo cargar el juego.')
+    return simplificarJuego(await respuesta.json())
+  } catch {
+    return juegosLocales.find((juego) => juego.id === Number(id)) ?? null
+  }
+}
+
 // Con texto busca por nombre; sin texto trae los juegos más populares.
 // Devuelve { juegos, respaldo } donde respaldo = true si se usaron los datos locales.
 export async function buscarJuegos(texto = '') {

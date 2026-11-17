@@ -15,7 +15,7 @@ export default function BuscadorJuegos() {
   const usuario = useSesion((state) => state.usuario)
   const misJuegos = useMisJuegos((state) => state.juegos)
   const misJuegosCargados = useMisJuegos((state) => state.cargado)
-  const cargarMisJuegos = useMisJuegos((state) => state.cargar)
+  const errorCarga = useMisJuegos((state) => state.errorCarga)
   const quitar = useMisJuegos((state) => state.quitar)
   const [errorLista, setErrorLista] = useState(null)
 
@@ -39,12 +39,6 @@ export default function BuscadorJuegos() {
     }
   }, [busqueda])
 
-  // Cargar la lista "Buscando equipo" una sola vez
-  useEffect(() => {
-    if (misJuegosCargados) return
-    cargarMisJuegos(usuario.id).catch((error) => setErrorLista(error.message))
-  }, [misJuegosCargados, cargarMisJuegos, usuario.id])
-
   async function quitarDeLista(rawgId) {
     setErrorLista(null)
     try {
@@ -58,7 +52,9 @@ export default function BuscadorJuegos() {
     <>
       <section aria-labelledby="titulo-mis-juegos" className="mb-6 rounded-xl border border-violet-200 bg-white p-4">
         <h2 id="titulo-mis-juegos" className="mb-3 font-bold">Buscando equipo en</h2>
-        {errorLista && <p role="alert" className="mb-2 text-red-700">{errorLista}</p>}
+        {(errorCarga || errorLista) && (
+          <p role="alert" className="mb-2 text-red-700">{errorLista ?? errorCarga}</p>
+        )}
         {misJuegosCargados && misJuegos.length === 0 && (
           <p className="text-slate-600">Todavía no agregas juegos. Busca uno abajo y presiona "Buscando equipo".</p>
         )}

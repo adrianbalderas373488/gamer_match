@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router'
 import { Gamepad2, LogOut } from 'lucide-react'
 import { useSesion } from '@/store/sesion'
+import { useMisJuegos } from '@/store/misJuegos'
 import { cerrarSesion } from '@/api/auth'
 
 const enlaces = [
@@ -13,6 +15,14 @@ export default function Layout() {
   const usuario = useSesion((state) => state.usuario)
   const datosDiscord = usuario?.user_metadata ?? {}
   const nombre = datosDiscord.custom_claims?.global_name ?? datosDiscord.full_name ?? datosDiscord.name
+
+  // Cargar la lista "Buscando equipo" una vez, para todas las páginas
+  const misJuegosCargados = useMisJuegos((state) => state.cargado)
+  const cargarMisJuegos = useMisJuegos((state) => state.cargar)
+
+  useEffect(() => {
+    if (!misJuegosCargados) cargarMisJuegos(usuario.id)
+  }, [misJuegosCargados, cargarMisJuegos, usuario.id])
 
   return (
     <div className="gamermatch min-h-screen bg-violet-50 text-slate-900">
