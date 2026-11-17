@@ -7,7 +7,10 @@ export async function obtenerPerfil(id) {
     .eq('id', id)
     .single()
 
-  if (error) throw new Error('No se pudo cargar el perfil.')
+  if (error) {
+    console.error(error)
+    throw new Error('No se pudo cargar el perfil.')
+  }
   return data
 }
 
@@ -19,6 +22,9 @@ export async function actualizarPerfil(id, cambios) {
     .select()
     .single()
 
-  if (error) throw new Error('No se pudo guardar el perfil.')
+  if (error) {
+    console.error(error)
+    throw new Error('No se pudo guardar el perfil.')
+  }
   return data
 }
