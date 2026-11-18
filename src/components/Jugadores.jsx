@@ -4,6 +4,7 @@ import { ArrowLeft, Plus } from 'lucide-react'
 import { obtenerJuego } from '@/api/rawg'
 import { buscarJugadoresPorJuego } from '@/api/jugadores'
 import { obtenerPerfil } from '@/api/perfiles'
+import { obtenerSolicitudes, enviarSolicitud } from '@/api/solicitudes'
 import { useSesion } from '@/store/sesion'
 import { useMisJuegos } from '@/store/misJuegos'
 import { calcularCoincidencias } from '@/lib/compatibilidad'
@@ -17,6 +18,7 @@ export default function Jugadores() {
   const [juego, setJuego] = useState(null)
   const [jugadores, setJugadores] = useState([])
   const [miPerfil, setMiPerfil] = useState(null)
+  const [solicitudes, setSolicitudes] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState(null)
 
@@ -29,15 +31,17 @@ export default function Jugadores() {
 
     async function cargarDatos() {
       try {
-        const [datosJuego, datosJugadores, datosPerfil] = await Promise.all([
+        const [datosJuego, datosJugadores, datosPerfil, datosSolicitudes] = await Promise.all([
           obtenerJuego(rawgId),
           buscarJugadoresPorJuego(rawgId, usuario.id),
           obtenerPerfil(usuario.id),
+          obtenerSolicitudes(),
         ])
         if (activo) {
           setJuego(datosJuego)
           setJugadores(datosJugadores)
           setMiPerfil(datosPerfil)
+          setSolicitudes(datosSolicitudes)
         }
       } catch (error) {
         if (activo) setError(error.message)
@@ -57,6 +61,16 @@ export default function Jugadores() {
     .filter((jugador) => !horario || jugador.disponibilidad?.horarios?.includes(horario))
     .map((jugador) => ({ jugador, coincidencias: calcularCoincidencias(jugador, miPerfil) }))
     .sort((a, b) => b.coincidencias.total - a.coincidencias.total)
+
+  async function enviar(jugador) {
+    const nueva = await enviarSolicitud(jugador.id, juego)
+    setSolicitudes((actuales) => [nueva, ...actuales])
+  }
+
+  // Todas las solicitudes cargadas son mías, basta con buscar al otro jugador
+  const solicitudCon = (jugador) => solicitudes.find((s) =>
+    s.rawg_id === Number(rawgId) && (s.de_id === jugador.id || s.para_id === jugador.id)
+  )
 
   if (cargando) return <p role="status" className="text-center">Cargando jugadores...</p>
   if (error) return <p role="alert" className="text-center text-red-700">Error: {error}</p>
@@ -88,7 +102,13 @@ export default function Jugadores() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtrados.map(({ jugador, coincidencias }) => (
-          <JugadorCard key={jugador.id} jugador={jugador} coincidencias={coincidencias} />
+          <JugadorCard
+            key={jugador.id}
+            jugador={jugador}
+            coincidencias={coincidencias}
+            solicitud={solicitudCon(jugador)}
+            onEnviar={juego ? enviar : undefined}
+          />
         ))}
         {filtrados.length === 0 && (
           <p className="col-span-full text-center text-slate-600">

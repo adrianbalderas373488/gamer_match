@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { Link } from 'react-router'
 import { CalendarDays, Clock } from 'lucide-react'
 import { Card } from './ui/card'
 
@@ -7,7 +9,7 @@ const coloresNivel = {
   Avanzado: 'bg-rose-100 text-rose-800',
 }
 
-export default function JugadorCard({ jugador, coincidencias }) {
+export default function JugadorCard({ jugador, coincidencias, solicitud, onEnviar }) {
   const dias = jugador.disponibilidad?.dias ?? []
   const horarios = jugador.disponibilidad?.horarios ?? []
 
@@ -42,14 +44,50 @@ export default function JugadorCard({ jugador, coincidencias }) {
           : 'Sin horarios en común contigo'}
       </p>
 
-      {/* Día 7: enviar solicitud de equipo */}
+      <div className="mt-auto">
+        <AccionSolicitud jugador={jugador} solicitud={solicitud} onEnviar={onEnviar} />
+      </div>
+    </Card>
+  )
+}
+
+function AccionSolicitud({ jugador, solicitud, onEnviar }) {
+  const [procesando, setProcesando] = useState(false)
+  const [error, setError] = useState(null)
+
+  async function enviar() {
+    setProcesando(true)
+    setError(null)
+    try {
+      await onEnviar(jugador)
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setProcesando(false)
+    }
+  }
+
+  if (solicitud?.estado === 'aceptada') {
+    return <Link to="/solicitudes" className="font-medium text-violet-800 hover:underline">¡Hicieron match! Ver contacto</Link>
+  }
+  if (solicitud?.estado === 'pendiente' && solicitud.de_id === jugador.id) {
+    return <Link to="/solicitudes" className="font-medium text-violet-800 hover:underline">Te envió una solicitud. Responder</Link>
+  }
+  if (solicitud) {
+    return <p className="text-sm text-slate-600">{solicitud.estado === 'pendiente' ? 'Solicitud enviada' : 'Solicitud rechazada'}</p>
+  }
+
+  return (
+    <>
       <button
         type="button"
-        disabled
-        className="mt-auto rounded-md bg-violet-700 px-4 py-2 text-white disabled:opacity-50"
+        onClick={enviar}
+        disabled={procesando || !onEnviar}
+        className="w-full rounded-md bg-violet-700 px-4 py-2 text-white hover:bg-violet-800 disabled:opacity-50"
       >
-        Enviar solicitud (próximamente)
+        {procesando ? 'Enviando...' : 'Enviar solicitud'}
       </button>
-    </Card>
+      {error && <p role="alert" className="mt-2 text-sm text-red-700">{error}</p>}
+    </>
   )
 }
