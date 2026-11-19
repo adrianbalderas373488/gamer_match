@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Check, MessageCircle, X } from 'lucide-react'
-import { obtenerSolicitudes, responderSolicitud } from '@/api/solicitudes'
+import { obtenerSolicitudes, responderSolicitud, cancelarSolicitud } from '@/api/solicitudes'
 import { useSesion } from '@/store/sesion'
 import { usePendientes } from '@/store/pendientes'
 import { Card } from './ui/card'
@@ -39,6 +39,19 @@ export default function Solicitudes() {
       await responderSolicitud(id, estado)
       setSolicitudes((actuales) => actuales.map((s) => (s.id === id ? { ...s, estado } : s)))
       actualizarPendientes(usuario.id)
+    } catch (error) {
+      setErrorRespuesta(error.message)
+    } finally {
+      setProcesando(null)
+    }
+  }
+
+  async function cancelar(id) {
+    setProcesando(id)
+    setErrorRespuesta(null)
+    try {
+      await cancelarSolicitud(id)
+      setSolicitudes((actuales) => actuales.filter((s) => s.id !== id))
     } catch (error) {
       setErrorRespuesta(error.message)
     } finally {
@@ -107,9 +120,24 @@ export default function Solicitudes() {
       <Grupo titulo="Enviadas" vacio="No tienes solicitudes enviadas.">
         {enviadas.map((s) => (
           <Fila key={s.id} jugador={s.para} juego={s.juego_nombre}>
-            <p className={`rounded-md px-3 py-2 text-sm font-medium ${s.estado === 'pendiente' ? 'bg-secondary/60 text-muted-foreground' : 'bg-secondary/60 text-muted-foreground line-through decoration-muted-foreground/60'}`}>
-              {s.estado === 'pendiente' ? 'Esperando respuesta' : 'Rechazada'}
-            </p>
+            {s.estado === 'pendiente' ? (
+              <div className="flex items-center gap-2">
+                <p className="flex-1 rounded-md bg-secondary/60 px-3 py-2 text-sm font-medium text-muted-foreground">Esperando respuesta</p>
+                <button
+                  type="button"
+                  onClick={() => cancelar(s.id)}
+                  disabled={procesando === s.id}
+                  aria-label={`Cancelar solicitud a ${s.para?.usuario ?? 'este jugador'}`}
+                  className="min-h-11 rounded-md px-3 text-sm font-medium text-muted-foreground ring-1 ring-border ring-inset hover:bg-secondary hover:text-foreground disabled:opacity-60"
+                >
+                  {procesando === s.id ? 'Cancelando...' : 'Cancelar'}
+                </button>
+              </div>
+            ) : (
+              <p className="rounded-md bg-secondary/60 px-3 py-2 text-sm font-medium text-muted-foreground line-through decoration-muted-foreground/60">
+                Rechazada
+              </p>
+            )}
           </Fila>
         ))}
       </Grupo>

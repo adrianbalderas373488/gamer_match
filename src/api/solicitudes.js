@@ -47,6 +47,21 @@ export async function enviarSolicitud(paraId, juego) {
   return data
 }
 
+// Solo quien la envió y solo si sigue pendiente (lo asegura la base de datos)
+export async function cancelarSolicitud(id) {
+  const { data, error } = await supabase
+    .from('solicitudes')
+    .delete()
+    .eq('id', id)
+    .eq('estado', 'pendiente')
+    .select('id')
+
+  if (error || data.length === 0) {
+    console.error(error)
+    throw new Error('No se pudo cancelar la solicitud. Puede que ya la hayan respondido.')
+  }
+}
+
 // estado: 'aceptada' o 'rechazada'
 export async function responderSolicitud(id, estado) {
   const { data, error } = await supabase

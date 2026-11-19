@@ -108,7 +108,7 @@ export default function BuscadorJuegos() {
           {cargando ? 'Buscando...' : `${juegos.length} resultados`}
         </p>
         {respaldo && !cargando && (
-          <p className="mt-1 text-sm text-amber-300">
+          <p className="mt-1 text-sm text-muted-foreground">
             RAWG no respondió; se muestran juegos guardados localmente.
           </p>
         )}

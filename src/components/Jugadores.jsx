@@ -181,8 +181,8 @@ function AvisoMiLista({ juego }) {
   }
 
   return (
-    <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-400/30 bg-amber-400/10 p-4">
-      <p className="text-amber-100">Tú todavía no buscas equipo en este juego. Agrégalo para que otros jugadores te encuentren.</p>
+    <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-card p-4 ring-1 ring-border">
+      <p>Tú todavía no buscas equipo en este juego. Agrégalo para que otros jugadores te encuentren.</p>
       <button
         type="button"
         onClick={agregarJuego}

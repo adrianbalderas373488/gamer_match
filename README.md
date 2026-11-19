@@ -31,7 +31,7 @@ Sin llave de RAWG la app usa los juegos guardados en `src/data/juegos.json`.
 
 ## Configurar Supabase
 
-1. **Base de datos:** en SQL Editor > New query, pegar y correr (Run) cada archivo de `supabase/migrations/` en orden, del `001` al `004`.
+1. **Base de datos:** en SQL Editor > New query, pegar y correr (Run) cada archivo de `supabase/migrations/` en orden, del `001` al `005`.
 2. **Login con Discord:** crear una aplicación en https://discord.com/developers/applications y, en OAuth2, agregar como Redirect la URL `https://<tu-proyecto>.supabase.co/auth/v1/callback`. Después, en Supabase > Authentication > Sign In / Providers > Discord, pegar el Client ID y el Client Secret.
 3. **URLs permitidas:** en Authentication > URL Configuration, poner como Site URL la del sitio publicado y en Redirect URLs agregar `https://gamer-match-three.vercel.app/**` y `http://localhost:5173/**`.
 4. **Función de Steam:**
