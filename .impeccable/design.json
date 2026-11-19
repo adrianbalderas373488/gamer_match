@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-19T00:00:00Z",
+  "title": "Design System: GamerMatch",
+  "extensions": {
+    "colorMeta": {
+      "fondo-noche": { "role": "neutral", "displayName": "Fondo noche", "tonalRamp": ["#0e0f13", "#14161b", "#1a1c22", "#24272f", "#2f333d", "#4a4f5c", "#a3a9b6", "#e9eaf0"] },
+      "panel-grafito": { "role": "neutral", "displayName": "Panel grafito", "tonalRamp": ["#0e0f13", "#14161b", "#1a1c22", "#24272f", "#2f333d", "#4a4f5c", "#a3a9b6", "#e9eaf0"] },
+      "tarjeta-grafito": { "role": "neutral", "displayName": "Tarjeta grafito", "tonalRamp": ["#0e0f13", "#14161b", "#1a1c22", "#24272f", "#2f333d", "#4a4f5c", "#a3a9b6", "#e9eaf0"] },
+      "secundario-grafito": { "role": "neutral", "displayName": "Grafito secundario", "tonalRamp": ["#0e0f13", "#14161b", "#1a1c22", "#24272f", "#2f333d", "#4a4f5c", "#a3a9b6", "#e9eaf0"] },
+      "elevado-grafito": { "role": "neutral", "displayName": "Grafito elevado", "tonalRamp": ["#0e0f13", "#14161b", "#1a1c22", "#24272f", "#2f333d", "#4a4f5c", "#a3a9b6", "#e9eaf0"] },
+      "linea": { "role": "neutral", "displayName": "Línea" },
+      "linea-campo": { "role": "neutral", "displayName": "Línea de campo" },
+      "texto": { "role": "neutral", "displayName": "Texto" },
+      "texto-tenue": { "role": "neutral", "displayName": "Texto tenue" },
+      "primary": { "role": "primary", "displayName": "Morado de acción", "tonalRamp": ["#2e1065", "#4c1d95", "#5b21b6", "#6d28d9", "#7c3aed", "#8b5cf6", "#b49cff", "#ede9fe"] },
+      "primary-hover": { "role": "primary", "displayName": "Morado profundo" },
+      "primary-foreground": { "role": "neutral", "displayName": "Blanco sobre morado" },
+      "acento-lila": { "role": "primary", "displayName": "Lila de selección", "tonalRamp": ["#2e1065", "#4c1d95", "#5b21b6", "#6d28d9", "#7c3aed", "#8b5cf6", "#b49cff", "#ede9fe"] },
+      "coincide-cian": { "role": "secondary", "displayName": "Cian de coincidencia", "tonalRamp": ["#083344", "#164e63", "#155e75", "#0e7490", "#0891b2", "#22d3ee", "#67e8f9", "#cffafe"] },
+      "aviso-rojo": { "role": "tertiary", "displayName": "Rojo de aviso", "tonalRamp": ["#4c0519", "#881337", "#9f1239", "#be123c", "#e11d48", "#f43f5e", "#fb7185", "#ffe4e6"] },
+      "error-texto": { "role": "tertiary", "displayName": "Texto de error" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Título del juego en la portada de Jugadores, titular de Login y 404. Siempre en mayúsculas." },
+      "headline": { "displayName": "Headline", "purpose": "Títulos de página (Juegos, Solicitudes, Mi perfil) y cifras destacadas. Siempre en mayúsculas." },
+      "logo": { "displayName": "Logo", "purpose": "Marca GamerMatch junto al cuadro morado." },
+      "title": { "displayName": "Title", "purpose": "Nombre de jugador o juego en tarjetas." },
+      "body": { "displayName": "Body", "purpose": "Texto general, con cifras tabulares." },
+      "body-sm": { "displayName": "Body pequeño", "purpose": "Metadatos, estados y barras de coincidencia." },
+      "label": { "displayName": "Label", "purpose": "Encabezados de grupo y etiquetas de filtro, en mayúsculas y tenue." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "fundido-portada", "value": "fade-in 300ms ease-out", "purpose": "Única animación: la imagen de portada de Jugadores entra con un fundido. Se desactiva con prefers-reduced-motion." },
+      { "name": "transicion-color", "value": "color, background-color 150ms", "purpose": "Respuesta de hover en botones e ítems de navegación." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción principal de una tarjeta o grupo: Enviar solicitud, Aceptar, Abrir en Discord.",
+      "html": "<button class=\"ds-btn-primary\">Enviar solicitud</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border: none; border-radius: 8px; background: #7c3aed; color: #ffffff; font: 600 0.875rem/1.25 'Inter Variable', sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-btn-primary:hover { background: #6d28d9; } .ds-btn-primary:focus-visible { outline: 2px solid #b49cff; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; }"
+    },
+    {
+      "name": "Botón secundario",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Acción secundaria en grafito: Rechazar, Buscar equipo sin marcar.",
+      "html": "<button class=\"ds-btn-secondary\">Rechazar</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border: none; border-radius: 8px; background: #24272f; color: #e9eaf0; font: 600 1rem/1.5 'Inter Variable', sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-btn-secondary:hover { background: #2f333d; } .ds-btn-secondary:focus-visible { outline: 2px solid #b49cff; outline-offset: 2px; }"
+    },
+    {
+      "name": "Botón fantasma",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Acción terciaria con anillo de 1px: Detalles, Jugadores.",
+      "html": "<button class=\"ds-btn-ghost\">Detalles</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; border: none; border-radius: 8px; background: transparent; box-shadow: inset 0 0 0 1px #2a2e37; color: #a3a9b6; font: 500 0.875rem/1.25 'Inter Variable', sans-serif; cursor: pointer; transition: background-color 150ms, color 150ms; } .ds-btn-ghost:hover { background: #24272f; color: #e9eaf0; } .ds-btn-ghost:focus-visible { outline: 2px solid #b49cff; outline-offset: 2px; }"
+    },
+    {
+      "name": "Botón seleccionado",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Estado seleccionado: morado al 15 % con texto lila (Buscando equipo, ¡Hicieron match!).",
+      "html": "<button class=\"ds-btn-selected\" aria-pressed=\"true\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg>Buscando equipo</button>",
+      "css": ".ds-btn-selected { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 16px; border: none; border-radius: 8px; background: rgba(124, 58, 237, 0.15); color: #b49cff; font: 600 1rem/1.5 'Inter Variable', sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-btn-selected:hover { background: rgba(124, 58, 237, 0.25); } .ds-btn-selected:focus-visible { outline: 2px solid #b49cff; outline-offset: 2px; }"
+    },
+    {
+      "name": "Buscador",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "Búsqueda de juegos con icono a la izquierda.",
+      "html": "<label class=\"ds-search\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input type=\"search\" placeholder=\"Buscar juego por nombre: Valorant, Minecraft...\" aria-label=\"Buscar juego por nombre\"></label>",
+      "css": ".ds-search { position: relative; display: block; max-width: 36rem; } .ds-search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #a3a9b6; pointer-events: none; } .ds-search input { width: 100%; min-height: 48px; padding: 0 16px 0 44px; border: 1px solid #343844; border-radius: 10px; background: #1a1c22; color: #e9eaf0; caret-color: #b49cff; font: 400 1rem/1.5 'Inter Variable', sans-serif; } .ds-search input::placeholder { color: #a3a9b6; } .ds-search input:focus-visible { outline: 2px solid #b49cff; outline-offset: 2px; }"
+    },
+    {
+      "name": "Navegación lateral",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Barra lateral estilo Discord con ítem activo y contador rojo de pendientes.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Principal\"><a href=\"#\" class=\"ds-nav-item ds-active\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"6\" x2=\"10\" y1=\"12\" y2=\"12\"/><line x1=\"8\" x2=\"8\" y1=\"10\" y2=\"14\"/><line x1=\"15\" x2=\"15.01\" y1=\"13\" y2=\"13\"/><line x1=\"18\" x2=\"18.01\" y1=\"11\" y2=\"11\"/><rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/></svg>Juegos</a><a href=\"#\" class=\"ds-nav-item\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/></svg>Solicitudes<span class=\"ds-counter\">2</span></a></nav>",
+      "css": ".ds-nav { width: 240px; padding: 8px 12px; background: #14161b; border-right: 1px solid #2a2e37; display: flex; flex-direction: column; gap: 4px; } .ds-nav-item { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; color: #a3a9b6; text-decoration: none; font: 500 1rem/1.5 'Inter Variable', sans-serif; transition: background-color 150ms, color 150ms; } .ds-nav-item:hover { background: rgba(36, 39, 47, 0.6); color: #e9eaf0; } .ds-nav-item.ds-active { background: #24272f; color: #e9eaf0; } .ds-nav-item.ds-active svg { color: #b49cff; } .ds-nav-item:focus-visible { outline: 2px solid #b49cff; outline-offset: 2px; } .ds-counter { margin-left: auto; display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 9999px; background: #e11d48; color: #fff; font: 700 0.75rem/1 'Inter Variable', sans-serif; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Insignia de nivel",
+      "kind": "chip",
+      "refersTo": "badge-nivel",
+      "description": "Nivel con 1 a 3 marcas lila sobre insignia neutra, nunca por color.",
+      "html": "<span class=\"ds-nivel\"><span class=\"ds-pips\" aria-hidden=\"true\"><i class=\"on\"></i><i class=\"on\"></i><i></i></span>Intermedio</span>",
+      "css": ".ds-nivel { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 4px; background: #24272f; color: #e9eaf0; font: 600 0.75rem/1rem 'Inter Variable', sans-serif; } .ds-pips { display: flex; gap: 2px; } .ds-pips i { display: block; width: 4px; height: 10px; border-radius: 2px; background: #2f333d; } .ds-pips i.on { background: #b49cff; }"
+    },
+    {
+      "name": "Tarjeta de jugador",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Tarjeta grafito con anillo de 1px, barra de coincidencias en cian y acción morada al pie.",
+      "html": "<article class=\"ds-card\"><h3 class=\"ds-card-title\">NocheRanked</h3><span class=\"ds-nivel\"><span class=\"ds-pips\" aria-hidden=\"true\"><i class=\"on\"></i><i class=\"on\"></i><i class=\"on\"></i></span>Avanzado</span><p class=\"ds-card-meta\">Viernes, Sábado · Noche</p><p class=\"ds-coincide\">Coinciden: Viernes, Noche</p><button class=\"ds-card-cta\">Enviar solicitud</button></article>",
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 12px; max-width: 320px; padding: 16px; border-radius: 10px; background: #1a1c22; box-shadow: 0 0 0 1px #2a2e37; color: #e9eaf0; font-family: 'Inter Variable', sans-serif; } .ds-card-title { margin: 0; font-size: 1rem; font-weight: 600; } .ds-card .ds-nivel { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 4px; background: #24272f; font-size: 0.75rem; font-weight: 600; } .ds-card .ds-pips { display: flex; gap: 2px; } .ds-card .ds-pips i { width: 4px; height: 10px; border-radius: 2px; background: #2f333d; } .ds-card .ds-pips i.on { background: #b49cff; } .ds-card-meta { margin: 0; font-size: 0.875rem; color: #a3a9b6; } .ds-coincide { margin: 0; padding: 8px 12px; border-radius: 8px; background: rgba(34, 211, 238, 0.1); box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.3); color: #cffafe; font-size: 0.875rem; } .ds-card-cta { min-height: 44px; border: none; border-radius: 8px; background: #7c3aed; color: #fff; font: 600 0.875rem/1.25 'Inter Variable', sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-card-cta:hover { background: #6d28d9; } .ds-card-cta:focus-visible { outline: 2px solid #b49cff; outline-offset: 2px; }"
+    },
+    {
+      "name": "Título de página",
+      "kind": "custom",
+      "refersTo": "headline",
+      "description": "Barlow Condensed en mayúsculas para títulos de página.",
+      "html": "<h1 class=\"ds-page-title\">Solicitudes</h1>",
+      "css": ".ds-page-title { margin: 0; font: 700 2.25rem/1.1 'Barlow Condensed', 'Arial Narrow', sans-serif; text-transform: uppercase; color: #e9eaf0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "La sala de noche",
+    "overview": "GamerMatch es una herramienta oscura de trabajo, hecha para usarse de noche frente a la PC o el celular, con el juego y Discord abiertos al lado. Sigue el estándar del género (Discord, Steam, el cliente de Riot): fondo casi negro azulado, capas de grafito para paneles y tarjetas, líneas de 1 px y un solo morado que dice \"aquí se actúa\". No es una plantilla con brillos: nada de neón, resplandores ni degradados decorativos.\n\nEl color es información, no decoración. El morado marca la acción principal y la selección; el cian aparece solo cuando hay coincidencia de horario; el rojo solo cuando algo espera respuesta. Todo lo demás es grafito y texto. La densidad es la de una app de uso diario: tarjetas compactas en rejilla, objetivos táctiles de 44 px y cifras tabulares para que los números no bailen.\n\nLa identidad tipográfica vive en los títulos: Barlow Condensed en mayúsculas para títulos de página y el logo, Inter para todo lo demás. El único momento cinematográfico es la portada del juego en Jugadores, una banda ancha que se funde con el fondo como en la tienda de Steam.",
+    "keyCharacteristics": [
+      "Oscuro por defecto (`html class=\"dark\"`), capas de grafito en lugar de sombras.",
+      "Un morado para actuar y seleccionar; cian y rojo con un solo significado cada uno.",
+      "Títulos condensados en mayúsculas; cuerpo en Inter con cifras tabulares.",
+      "Barra lateral estilo Discord en escritorio; barra superior y pestañas abajo en celular.",
+      "Movimiento mínimo: un solo fundido de 300 ms en la portada."
+    ],
+    "rules": [
+      { "name": "The One Purple Rule", "body": "El morado aparece solo en la acción principal y en la selección. Un botón secundario nunca es morado; si dos acciones compiten, una de ellas es grafito.", "section": "colors" },
+      { "name": "The One Meaning Rule", "body": "El cian significa \"coincide tu horario\" y el rojo significa \"pendiente\". Ningún otro elemento puede usarlos, ni como decoración ni como estado genérico.", "section": "colors" },
+      { "name": "The Pips Not Hue Rule", "body": "El nivel (Principiante, Intermedio, Avanzado) se muestra con 1 a 3 marcas lila sobre una insignia neutra, nunca con un color por nivel.", "section": "colors" },
+      { "name": "The Condensed Title Rule", "body": "Barlow Condensed solo en mayúsculas y solo para títulos de página, el título de la portada, el logo y cifras destacadas. Nunca en párrafos, botones ni etiquetas.", "section": "typography" },
+      { "name": "The Tabular Rule", "body": "Todo el cuerpo usa cifras tabulares (`font-variant-numeric: tabular-nums` en `body`) y los números se formatean con `es-MX`.", "section": "typography" },
+      { "name": "The 44px Rule", "body": "Todo elemento interactivo mide al menos 44px de alto (y de ancho cuando es un icono solo). El buscador y el botón de Login miden 48px.", "section": "layout" },
+      { "name": "The Flat Graphite Rule", "body": "Nada flota: sin `box-shadow`, sin resplandores, sin anillos de color alrededor de tarjetas en reposo. Si algo necesita destacar, cambia de capa tonal, no de sombra.", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** usar el morado (primary, hover primary-hover) solo para la acción principal y la selección; el texto seleccionado va en lila (acento-lila).",
+      "**Do** reservar el cian (coincide-cian) para coincidencias de horario y el rojo (aviso-rojo) para lo pendiente: contador y solicitud entrante.",
+      "**Do** mostrar el nivel con 1–3 marcas lila sobre una insignia neutra.",
+      "**Do** resolver acciones secundarias en grafito (secundario-grafito, hover elevado-grafito) o como botón fantasma con anillo de 1px.",
+      "**Do** escribir títulos de página y logo en Barlow Condensed mayúsculas; todo lo demás en Inter con cifras tabulares.",
+      "**Do** dar 44px mínimos a todo objetivo táctil.",
+      "**Do** mantener la barra lateral estilo Discord con el panel de usuario abajo en escritorio, y barra superior más pestañas fijas abajo en celular.",
+      "**Do** limitar el movimiento al fundido de 300ms ease-out de la portada, más transiciones de color en hover."
+    ],
+    "donts": [
+      "**Don't** usar bordes de acento a la izquierda en tarjetas, avisos o filas.",
+      "**Don't** usar resplandores, sombras de color ni neón.",
+      "**Don't** poner etiquetas pequeñas (eyebrows) encima de los títulos.",
+      "**Don't** asignar un color distinto a cada nivel ni usar cian o rojo como decoración.",
+      "**Don't** volver al fondo claro con tarjetas blancas y lila genérico."
+    ]
+  }
+}
