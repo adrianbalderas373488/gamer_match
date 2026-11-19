@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { CalendarDays, Clock } from 'lucide-react'
+import { CalendarDays, Clock, Trophy } from 'lucide-react'
+import { obtenerEstadisticasSteam } from '@/api/steam'
 import { Card } from './ui/card'
 
 const coloresNivel = {
@@ -9,7 +10,7 @@ const coloresNivel = {
   Avanzado: 'bg-rose-100 text-rose-800',
 }
 
-export default function JugadorCard({ jugador, coincidencias, solicitud, onEnviar }) {
+export default function JugadorCard({ jugador, coincidencias, juego, solicitud, onEnviar }) {
   const dias = jugador.disponibilidad?.dias ?? []
   const horarios = jugador.disponibilidad?.horarios ?? []
 
@@ -44,10 +45,49 @@ export default function JugadorCard({ jugador, coincidencias, solicitud, onEnvia
           : 'Sin horarios en común contigo'}
       </p>
 
+      {jugador.steam_id && <HorasSteam steamId={jugador.steam_id} juego={juego} />}
+
       <div className="mt-auto">
         <AccionSolicitud jugador={jugador} solicitud={solicitud} onEnviar={onEnviar} />
       </div>
     </Card>
+  )
+}
+
+// Dato extra de la tarjeta: si Steam falla, simplemente no se muestra
+function HorasSteam({ steamId, juego }) {
+  const [datos, setDatos] = useState(null)
+
+  useEffect(() => {
+    let activo = true
+
+    async function cargarHoras() {
+      try {
+        const respuesta = await obtenerEstadisticasSteam(steamId, juego)
+        if (activo) setDatos(respuesta)
+      } catch {
+        if (activo) setDatos(null)
+      }
+    }
+
+    cargarHoras()
+    return () => { activo = false }
+  }, [steamId, juego])
+
+  if (!datos) return null
+
+  let texto = 'Perfil de Steam privado'
+  if (!datos.privado) {
+    texto = datos.horasJuego !== null
+      ? `${datos.horasJuego.toLocaleString('es-MX')} h en este juego (Steam)`
+      : `${datos.horasTotales.toLocaleString('es-MX')} h en Steam`
+  }
+
+  return (
+    <p className="flex items-start gap-2 text-sm">
+      <Trophy aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-violet-700" />
+      <span>{texto}</span>
+    </p>
   )
 }
 

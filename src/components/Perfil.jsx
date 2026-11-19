@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { obtenerPerfil, actualizarPerfil } from '@/api/perfiles'
+import { obtenerEstadisticasSteam } from '@/api/steam'
 import { useSesion } from '@/store/sesion'
 import { NIVELES, DIAS, HORARIOS } from '@/data/opciones'
 
@@ -44,6 +45,7 @@ export default function Perfil() {
               <p className="text-sm text-slate-600">Cuenta vinculada con Discord</p>
             </div>
           </div>
+          {perfil.steam_id && <EstadisticasSteam key={perfil.steam_id} steamId={perfil.steam_id} />}
           <FormularioPerfil perfil={perfil} onGuardado={setPerfil} />
         </>
       )}
@@ -51,10 +53,62 @@ export default function Perfil() {
   )
 }
 
+function EstadisticasSteam({ steamId }) {
+  const [datos, setDatos] = useState(null)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let activo = true
+
+    async function cargarEstadisticas() {
+      try {
+        const respuesta = await obtenerEstadisticasSteam(steamId)
+        if (activo) setDatos(respuesta)
+      } catch (error) {
+        if (activo) setError(error.message)
+      }
+    }
+
+    cargarEstadisticas()
+    return () => { activo = false }
+  }, [steamId])
+
+  return (
+    <div className="mb-6 rounded-xl border border-violet-200 bg-white p-4">
+      <h3 className="mb-2 font-bold">Estadísticas de Steam</h3>
+      {error && <p role="alert" className="text-red-700">{error}</p>}
+      {!error && !datos && <p role="status">Cargando estadísticas...</p>}
+      {datos?.privado && (
+        <p className="text-slate-600">
+          La cuenta {datos.nombre} tiene privados los detalles de sus juegos. Hazlos públicos en Steam para ver tus horas.
+        </p>
+      )}
+      {datos && !datos.privado && (
+        <>
+          <p>
+            <span className="font-medium">{datos.nombre}</span>: {datos.totalJuegos} juegos, {datos.horasTotales.toLocaleString('es-MX')} horas jugadas
+          </p>
+          {datos.topJuegos.length > 0 && (
+            <ul className="mt-2 text-sm text-slate-700">
+              {datos.topJuegos.map((juego) => (
+                <li key={juego.nombre} className="flex justify-between gap-4 py-0.5">
+                  <span>{juego.nombre}</span>
+                  <span className="shrink-0">{juego.horas.toLocaleString('es-MX')} h</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
 function FormularioPerfil({ perfil, onGuardado }) {
   const [nivel, setNivel] = useState(perfil.nivel ?? '')
   const [dias, setDias] = useState(perfil.disponibilidad?.dias ?? [])
   const [horarios, setHorarios] = useState(perfil.disponibilidad?.horarios ?? [])
+  const [steamId, setSteamId] = useState(perfil.steam_id ?? '')
   const [guardando, setGuardando] = useState(false)
   const [mensaje, setMensaje] = useState(null)
 
@@ -70,6 +124,7 @@ function FormularioPerfil({ perfil, onGuardado }) {
       const actualizado = await actualizarPerfil(perfil.id, {
         nivel: nivel || null,
         disponibilidad: { dias, horarios },
+        steam_id: steamId.trim() || null,
       })
       onGuardado(actualizado)
       setMensaje({ tipo: 'exito', texto: 'Perfil guardado.' })
@@ -126,6 +181,23 @@ function FormularioPerfil({ perfil, onGuardado }) {
           ))}
         </div>
       </fieldset>
+
+      <div>
+        <label htmlFor="steam-id" className="mb-2 block font-medium">Steam ID (opcional)</label>
+        <input
+          id="steam-id"
+          value={steamId}
+          onChange={(e) => setSteamId(e.target.value)}
+          inputMode="numeric"
+          pattern="\s*7656119[0-9]{10}\s*"
+          title="Tu Steam ID de 17 dígitos, empieza con 7656119"
+          aria-describedby="ayuda-steam"
+          className="block w-full rounded-md border border-slate-300 bg-white p-2"
+        />
+        <p id="ayuda-steam" className="mt-1 text-sm text-slate-600">
+          Son 17 dígitos. Lo encuentras en Steam, en Detalles de la cuenta. Para mostrar tus horas, los detalles de tus juegos deben ser públicos.
+        </p>
+      </div>
 
       <button
         type="submit"

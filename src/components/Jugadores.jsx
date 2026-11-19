@@ -106,6 +106,7 @@ export default function Jugadores() {
             key={jugador.id}
             jugador={jugador}
             coincidencias={coincidencias}
+            juego={juego?.nombre}
             solicitud={solicitudCon(jugador)}
             onEnviar={juego ? enviar : undefined}
           />
