@@ -46,8 +46,8 @@ export default function Solicitudes() {
     }
   }
 
-  if (cargando) return <p role="status" className="text-center">Cargando solicitudes...</p>
-  if (error) return <p role="alert" className="text-center text-red-700">Error: {error}</p>
+  if (cargando) return <p role="status" className="py-10 text-center text-muted-foreground">Cargando solicitudes...</p>
+  if (error) return <p role="alert" className="py-10 text-center text-destructive">Error: {error}</p>
 
   const matches = solicitudes.filter((s) => s.estado === 'aceptada')
   const recibidas = solicitudes.filter((s) => s.estado === 'pendiente' && s.para_id === usuario.id)
@@ -56,8 +56,8 @@ export default function Solicitudes() {
 
   return (
     <section aria-labelledby="titulo-solicitudes" className="space-y-8">
-      <h2 id="titulo-solicitudes" className="text-2xl font-bold">Solicitudes</h2>
-      {errorRespuesta && <p role="alert" className="text-red-700">{errorRespuesta}</p>}
+      <h1 id="titulo-solicitudes" className="font-display text-4xl font-bold uppercase">Solicitudes</h1>
+      {errorRespuesta && <p role="alert" className="text-destructive">{errorRespuesta}</p>}
 
       <Grupo titulo="Matches" vacio="Todavía no tienes matches.">
         {matches.map((s) => {
@@ -69,7 +69,7 @@ export default function Solicitudes() {
                   href={`https://discord.com/users/${jugador.discord_id}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-center gap-1 rounded-md bg-violet-700 px-4 py-2 text-white hover:bg-violet-800"
+                  className="flex min-h-11 items-center justify-center gap-1.5 rounded-md bg-primary px-4 font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
                 >
                   <MessageCircle aria-hidden="true" className="h-4 w-4" /> Abrir en Discord
                 </a>
@@ -87,7 +87,7 @@ export default function Solicitudes() {
                 type="button"
                 onClick={() => responder(s.id, 'aceptada')}
                 disabled={procesando === s.id}
-                className="flex flex-1 items-center justify-center gap-1 rounded-md bg-violet-700 px-4 py-2 text-white hover:bg-violet-800 disabled:opacity-60"
+                className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-md bg-primary px-4 font-semibold text-primary-foreground transition-colors hover:bg-primary-hover disabled:opacity-60"
               >
                 <Check aria-hidden="true" className="h-4 w-4" /> Aceptar
               </button>
@@ -95,7 +95,7 @@ export default function Solicitudes() {
                 type="button"
                 onClick={() => responder(s.id, 'rechazada')}
                 disabled={procesando === s.id}
-                className="flex flex-1 items-center justify-center gap-1 rounded-md border border-slate-300 px-4 py-2 hover:bg-slate-50 disabled:opacity-60"
+                className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-md bg-secondary px-4 font-semibold transition-colors hover:bg-elevado disabled:opacity-60"
               >
                 <X aria-hidden="true" className="h-4 w-4" /> Rechazar
               </button>
@@ -107,7 +107,7 @@ export default function Solicitudes() {
       <Grupo titulo="Enviadas" vacio="No tienes solicitudes enviadas.">
         {enviadas.map((s) => (
           <Fila key={s.id} jugador={s.para} juego={s.juego_nombre}>
-            <p className="text-sm text-slate-600">
+            <p className={`rounded-md px-3 py-2 text-sm font-medium ${s.estado === 'pendiente' ? 'bg-secondary/60 text-muted-foreground' : 'bg-secondary/60 text-muted-foreground line-through decoration-muted-foreground/60'}`}>
               {s.estado === 'pendiente' ? 'Esperando respuesta' : 'Rechazada'}
             </p>
           </Fila>
@@ -120,11 +120,14 @@ export default function Solicitudes() {
 function Grupo({ titulo, vacio, children }) {
   return (
     <div>
-      <h3 className="mb-3 text-lg font-bold">{titulo}</h3>
+      <h2 className="mb-3 flex items-center gap-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+        {titulo}
+        <span className="rounded bg-secondary px-1.5 py-0.5 text-foreground">{children.length}</span>
+      </h2>
       {children.length ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
       ) : (
-        <p className="text-slate-600">{vacio}</p>
+        <p className="rounded-lg border border-dashed border-border px-4 py-5 text-muted-foreground">{vacio}</p>
       )}
     </div>
   )
@@ -132,16 +135,16 @@ function Grupo({ titulo, vacio, children }) {
 
 function Fila({ jugador, juego, children }) {
   return (
-    <Card className="gap-3 border border-violet-200 bg-white p-4">
+    <Card className="gap-3 rounded-lg bg-card p-4 ring-1 ring-border">
       <div className="flex items-center gap-3">
         {jugador?.avatar_url ? (
           <img src={jugador.avatar_url} alt="" className="h-12 w-12 rounded-full" />
         ) : (
-          <div className="h-12 w-12 rounded-full bg-violet-200" aria-hidden="true" />
+          <span className="h-12 w-12 shrink-0 rounded-full bg-secondary" aria-hidden="true" />
         )}
-        <div>
-          <p className="font-bold">{jugador?.usuario ?? 'Jugador'}</p>
-          <p className="text-sm text-slate-600">{juego}</p>
+        <div className="min-w-0">
+          <p className="truncate font-semibold">{jugador?.usuario ?? 'Jugador'}</p>
+          <p className="truncate text-sm text-muted-foreground">{juego}</p>
         </div>
       </div>
       {children}

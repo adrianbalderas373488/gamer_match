@@ -6,7 +6,7 @@ export default function RutaProtegida() {
   const cargando = useSesion((state) => state.cargando)
 
   if (cargando) {
-    return <p role="status" className="p-6 text-center">Cargando sesión...</p>
+    return <p role="status" className="p-6 text-center text-muted-foreground">Cargando sesión...</p>
   }
 
   if (!usuario) return <Navigate to="/login" replace />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { X } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { buscarJuegos } from '@/api/rawg'
 import { useSesion } from '@/store/sesion'
 import { useMisJuegos } from '@/store/misJuegos'
@@ -50,25 +50,39 @@ export default function BuscadorJuegos() {
 
   return (
     <>
-      <section aria-labelledby="titulo-mis-juegos" className="mb-6 rounded-xl border border-violet-200 bg-white p-4">
-        <h2 id="titulo-mis-juegos" className="mb-3 font-bold">Buscando equipo en</h2>
+      <h1 className="mb-6 font-display text-4xl font-bold uppercase">Juegos</h1>
+
+      <section aria-labelledby="titulo-mis-juegos" className="mb-8">
+        <h2 id="titulo-mis-juegos" className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+          Buscando equipo en
+        </h2>
         {(errorCarga || errorLista) && (
-          <p role="alert" className="mb-2 text-red-700">{errorLista ?? errorCarga}</p>
+          <p role="alert" className="mb-2 text-destructive">{errorLista ?? errorCarga}</p>
         )}
         {misJuegosCargados && misJuegos.length === 0 && (
-          <p className="text-slate-600">Todavía no agregas juegos. Busca uno abajo y presiona "Buscando equipo".</p>
+          <p className="rounded-lg border border-dashed border-border px-4 py-5 text-muted-foreground">
+            Todavía no agregas juegos. Busca uno abajo y presiona «Buscar equipo».
+          </p>
         )}
         <ul className="flex flex-wrap gap-2">
           {misJuegos.map((juego) => (
-            <li key={juego.rawg_id} className="flex items-center gap-1 rounded-full bg-violet-100 py-1 pr-1 pl-3">
-              <Link to={`/jugadores/${juego.rawg_id}`} className="text-violet-800 hover:underline">
+            <li key={juego.rawg_id} className="flex items-center overflow-hidden rounded-lg border border-border bg-card">
+              <Link
+                to={`/jugadores/${juego.rawg_id}`}
+                className="flex min-h-11 items-center gap-2.5 pr-2 font-medium hover:text-acento"
+              >
+                {juego.imagen ? (
+                  <img src={juego.imagen} alt="" className="h-11 w-16 object-cover" />
+                ) : (
+                  <span className="h-11 w-16 bg-secondary" aria-hidden="true" />
+                )}
                 {juego.nombre}
               </Link>
               <button
                 type="button"
                 onClick={() => quitarDeLista(juego.rawg_id)}
                 aria-label={`Quitar ${juego.nombre} de mi lista`}
-                className="rounded-full p-1 hover:bg-violet-200"
+                className="grid min-h-11 min-w-11 place-items-center text-muted-foreground hover:bg-secondary hover:text-foreground"
               >
                 <X aria-hidden="true" className="h-4 w-4" />
               </button>
@@ -77,38 +91,41 @@ export default function BuscadorJuegos() {
         </ul>
       </section>
 
-      <div className="mx-auto mb-6 max-w-md rounded-xl border border-violet-200 bg-white p-4">
-        <label htmlFor="buscador-juegos" className="mb-2 block font-medium">Buscar juego por nombre</label>
-        <input
-          id="buscador-juegos"
-          type="search"
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          placeholder="Ej. Valorant, Minecraft..."
-          className="w-full rounded-md border border-slate-300 px-3 py-2 focus-visible:outline-2 focus-visible:outline-violet-600"
-        />
-        <p className="mt-2 text-sm text-slate-600" role="status">
-          {cargando ? 'Buscando...' : `Resultados: ${juegos.length}`}
+      <div className="mb-6">
+        <label htmlFor="buscador-juegos" className="sr-only">Buscar juego por nombre</label>
+        <div className="relative max-w-xl">
+          <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3.5 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+          <input
+            id="buscador-juegos"
+            type="search"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar juego por nombre: Valorant, Minecraft..."
+            className="min-h-12 w-full rounded-lg border border-input bg-card pr-4 pl-11 placeholder:text-muted-foreground"
+          />
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground" role="status">
+          {cargando ? 'Buscando...' : `${juegos.length} resultados`}
         </p>
         {respaldo && !cargando && (
-          <p className="mt-1 text-sm text-amber-700">
+          <p className="mt-1 text-sm text-amber-300">
             RAWG no respondió; se muestran juegos guardados localmente.
           </p>
         )}
       </div>
 
-      <section aria-label="Juegos" className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <section aria-label="Resultados" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {juegos.map((juego) => (
           <JuegoCard juego={juego} key={juego.id} />
         ))}
         {!cargando && juegos.length === 0 && (
-          <p className="col-span-full text-center">No se encontraron juegos.</p>
+          <p className="col-span-full py-10 text-center text-muted-foreground">No se encontraron juegos con ese nombre.</p>
         )}
       </section>
 
-      <p className="mt-8 text-center text-sm text-slate-500">
+      <p className="mt-10 text-center text-sm text-muted-foreground">
         Datos de juegos proporcionados por{' '}
-        <a href="https://rawg.io" target="_blank" rel="noreferrer" className="underline">RAWG</a>.
+        <a href="https://rawg.io" target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-foreground">RAWG</a>.
       </p>
     </>
   )
