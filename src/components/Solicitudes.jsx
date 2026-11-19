@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { Check, MessageCircle, X } from 'lucide-react'
 import { obtenerSolicitudes, responderSolicitud } from '@/api/solicitudes'
 import { useSesion } from '@/store/sesion'
+import { usePendientes } from '@/store/pendientes'
 import { Card } from './ui/card'
 
 export default function Solicitudes() {
   const usuario = useSesion((state) => state.usuario)
+  const actualizarPendientes = usePendientes((state) => state.actualizar)
   const [solicitudes, setSolicitudes] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState(null)
@@ -36,6 +38,7 @@ export default function Solicitudes() {
     try {
       await responderSolicitud(id, estado)
       setSolicitudes((actuales) => actuales.map((s) => (s.id === id ? { ...s, estado } : s)))
+      actualizarPendientes(usuario.id)
     } catch (error) {
       setErrorRespuesta(error.message)
     } finally {

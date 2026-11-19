@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { supabase } from '../api/supabase'
 import { useMisJuegos } from './misJuegos'
+import { usePendientes } from './pendientes'
 
 // Usuario actual (viene de Supabase Auth después del login con Discord).
 // No usamos persist: Supabase ya guarda la sesión por su cuenta.
@@ -23,6 +24,7 @@ export function escucharSesion() {
     // Si cambia de cuenta o sale, se borra la lista de juegos del usuario anterior
     if (useSesion.getState().usuario?.id !== nuevoUsuario?.id) {
       useMisJuegos.getState().limpiar()
+      usePendientes.getState().limpiar()
     }
     useSesion.getState().setUsuario(nuevoUsuario)
   })

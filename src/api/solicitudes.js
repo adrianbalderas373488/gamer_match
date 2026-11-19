@@ -16,6 +16,21 @@ export async function obtenerSolicitudes() {
   return data
 }
 
+// Solo cuenta, sin traer las filas
+export async function contarSolicitudesPendientes(miId) {
+  const { count, error } = await supabase
+    .from('solicitudes')
+    .select('id', { count: 'exact', head: true })
+    .eq('para_id', miId)
+    .eq('estado', 'pendiente')
+
+  if (error) {
+    console.error(error)
+    throw new Error('No se pudieron contar las solicitudes.')
+  }
+  return count
+}
+
 export async function enviarSolicitud(paraId, juego) {
   const { data, error } = await supabase
     .from('solicitudes')

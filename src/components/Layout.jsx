@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
-import { NavLink, Outlet } from 'react-router'
+import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { Gamepad2, LogOut } from 'lucide-react'
 import { useSesion } from '@/store/sesion'
 import { useMisJuegos } from '@/store/misJuegos'
+import { usePendientes } from '@/store/pendientes'
 import { cerrarSesion } from '@/api/auth'
 
 const enlaces = [
@@ -24,6 +25,15 @@ export default function Layout() {
     if (!misJuegosCargados) cargarMisJuegos(usuario.id)
   }, [misJuegosCargados, cargarMisJuegos, usuario.id])
 
+  // Revisar solicitudes pendientes cada vez que cambia la página
+  const { pathname } = useLocation()
+  const pendientes = usePendientes((state) => state.total)
+  const actualizarPendientes = usePendientes((state) => state.actualizar)
+
+  useEffect(() => {
+    actualizarPendientes(usuario.id)
+  }, [pathname, actualizarPendientes, usuario.id])
+
   return (
     <div className="gamermatch min-h-screen bg-violet-50 text-slate-900">
       <header className="bg-violet-700 px-4 py-4 text-white">
@@ -42,16 +52,27 @@ export default function Layout() {
                     }
                   >
                     {texto}
+                    {ruta === '/solicitudes' && pendientes > 0 && (
+                      <span className="ml-1.5 rounded-full bg-amber-400 px-1.5 py-0.5 text-xs font-bold text-slate-900">
+                        {pendientes}<span className="sr-only"> pendientes</span>
+                      </span>
+                    )}
                   </NavLink>
                 </li>
               ))}
             </ul>
           </nav>
           <div className="flex items-center gap-3">
-            {datosDiscord.avatar_url && (
-              <img src={datosDiscord.avatar_url} alt="" className="h-8 w-8 rounded-full" />
-            )}
-            <span className="font-medium">{nombre}</span>
+            <Link
+              to="/perfil"
+              aria-label={`Mi perfil: ${nombre ?? 'usuario'}`}
+              className="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-violet-600"
+            >
+              {datosDiscord.avatar_url && (
+                <img src={datosDiscord.avatar_url} alt="" className="h-8 w-8 rounded-full" />
+              )}
+              <span className="font-medium">{nombre}</span>
+            </Link>
             <button
               type="button"
               onClick={cerrarSesion}
