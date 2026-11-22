@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { CalendarDays, Clock, Trophy, UserRound } from 'lucide-react'
+import { CalendarDays, ChevronRight, Clock, Trophy, UserRound } from 'lucide-react'
 import { obtenerEstadisticasSteam } from '@/api/steam'
 import { Card } from './ui/card'
 
@@ -13,7 +13,11 @@ export default function JugadorCard({ jugador, coincidencias, juego, solicitud, 
 
   return (
     <Card className="gap-3 rounded-lg bg-card p-4 ring-1 ring-border">
-      <div className="flex items-center gap-3">
+      <Link
+        to={`/jugador/${jugador.id}`}
+        aria-label={`Ver perfil de ${jugador.usuario ?? 'este jugador'}`}
+        className="group -m-1 flex items-center gap-3 rounded-md p-1 hover:bg-secondary/60"
+      >
         {jugador.avatar_url ? (
           <img src={jugador.avatar_url} alt="" className="h-12 w-12 rounded-full" />
         ) : (
@@ -22,19 +26,13 @@ export default function JugadorCard({ jugador, coincidencias, juego, solicitud, 
           </span>
         )}
         <div className="min-w-0">
-          <h3 className="truncate text-base font-semibold text-foreground">{jugador.usuario ?? 'Jugador'}</h3>
-          <span className={`mt-1 inline-flex items-center gap-1.5 rounded bg-secondary px-2 py-0.5 text-xs font-semibold ${jugador.nivel ? 'text-foreground' : 'text-muted-foreground'}`}>
-            {marcasNivel[jugador.nivel] && (
-              <span className="flex gap-0.5" aria-hidden="true">
-                {[1, 2, 3].map((n) => (
-                  <span key={n} className={`h-2.5 w-1 rounded-sm ${n <= marcasNivel[jugador.nivel] ? 'bg-acento' : 'bg-elevado'}`} />
-                ))}
-              </span>
-            )}
-            {jugador.nivel ?? 'Nivel sin definir'}
-          </span>
+          <h3 className="truncate text-base font-semibold text-foreground group-hover:text-acento">
+            {jugador.usuario ?? 'Jugador'}
+          </h3>
+          <div className="mt-1"><Nivel nivel={jugador.nivel} /></div>
         </div>
-      </div>
+        <ChevronRight aria-hidden="true" className="ml-auto h-5 w-5 shrink-0 text-muted-foreground group-hover:text-acento" />
+      </Link>
 
       <div className="space-y-1.5 text-sm text-muted-foreground">
         <p className="flex items-start gap-2">
@@ -62,6 +60,21 @@ export default function JugadorCard({ jugador, coincidencias, juego, solicitud, 
         <AccionSolicitud jugador={jugador} solicitud={solicitud} onEnviar={onEnviar} />
       </div>
     </Card>
+  )
+}
+
+export function Nivel({ nivel }) {
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded bg-secondary px-2 py-0.5 text-xs font-semibold ${nivel ? 'text-foreground' : 'text-muted-foreground'}`}>
+      {marcasNivel[nivel] && (
+        <span className="flex gap-0.5" aria-hidden="true">
+          {[1, 2, 3].map((n) => (
+            <span key={n} className={`h-2.5 w-1 rounded-sm ${n <= marcasNivel[nivel] ? 'bg-acento' : 'bg-elevado'}`} />
+          ))}
+        </span>
+      )}
+      {nivel ?? 'Nivel sin definir'}
+    </span>
   )
 }
 

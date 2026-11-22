@@ -10,6 +10,7 @@ import Login from './components/Login'
 import BuscadorJuegos from './components/BuscadorJuegos'
 import Jugadores from './components/Jugadores'
 import Perfil from './components/Perfil'
+import PerfilJugador from './components/PerfilJugador'
 import Solicitudes from './components/Solicitudes'
 import NoEncontrado from './components/NoEncontrado'
 
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="juegos" element={<BuscadorJuegos />} />
             <Route path="jugadores/:rawgId" element={<Jugadores />} />
             <Route path="perfil" element={<Perfil />} />
+            <Route path="jugador/:id" element={<PerfilJugador />} />
             <Route path="solicitudes" element={<Solicitudes />} />
           </Route>
         </Route>

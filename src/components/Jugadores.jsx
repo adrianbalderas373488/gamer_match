@@ -103,7 +103,15 @@ export default function Jugadores() {
         </div>
       </div>
 
-      {juego && <AvisoMiLista juego={juego} />}
+      {!juego ? (
+        <div className="rounded-lg border border-dashed border-border py-10 text-center text-muted-foreground">
+          <p>Este juego no existe o RAWG no lo encontró.</p>
+          <Link to="/juegos" className="mt-3 inline-flex min-h-11 items-center font-medium text-acento underline underline-offset-4">
+            Volver a Juegos
+          </Link>
+        </div>
+      ) : (<>
+      <AvisoMiLista juego={juego} />
 
       <div className="mb-4 grid grid-cols-3 gap-2 sm:gap-3">
         <Filtro id="filtro-nivel" etiqueta="Nivel" valor={nivel} onCambio={setNivel} opciones={NIVELES} />
@@ -120,9 +128,9 @@ export default function Jugadores() {
             key={jugador.id}
             jugador={jugador}
             coincidencias={coincidencias}
-            juego={juego?.nombre}
+            juego={juego.nombre}
             solicitud={solicitudCon(jugador)}
-            onEnviar={juego ? enviar : undefined}
+            onEnviar={enviar}
           />
         ))}
         {filtrados.length === 0 && (
@@ -133,6 +141,7 @@ export default function Jugadores() {
           </p>
         )}
       </div>
+      </>)}
     </section>
   )
 }

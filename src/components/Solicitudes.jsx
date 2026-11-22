@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Check, MessageCircle, X } from 'lucide-react'
+import { Link } from 'react-router'
+import { Check, ChevronRight, MessageCircle, X } from 'lucide-react'
 import { obtenerSolicitudes, responderSolicitud, cancelarSolicitud } from '@/api/solicitudes'
 import { useSesion } from '@/store/sesion'
 import { usePendientes } from '@/store/pendientes'
@@ -164,17 +165,22 @@ function Grupo({ titulo, vacio, children }) {
 function Fila({ jugador, juego, children }) {
   return (
     <Card className="gap-3 rounded-lg bg-card p-4 ring-1 ring-border">
-      <div className="flex items-center gap-3">
+      <Link
+        to={`/jugador/${jugador?.id}`}
+        aria-label={`Ver perfil de ${jugador?.usuario ?? 'este jugador'}`}
+        className="group -m-1 flex items-center gap-3 rounded-md p-1 hover:bg-secondary/60"
+      >
         {jugador?.avatar_url ? (
           <img src={jugador.avatar_url} alt="" className="h-12 w-12 rounded-full" />
         ) : (
           <span className="h-12 w-12 shrink-0 rounded-full bg-secondary" aria-hidden="true" />
         )}
         <div className="min-w-0">
-          <p className="truncate font-semibold">{jugador?.usuario ?? 'Jugador'}</p>
+          <p className="truncate font-semibold group-hover:text-acento">{jugador?.usuario ?? 'Jugador'}</p>
           <p className="truncate text-sm text-muted-foreground">{juego}</p>
         </div>
-      </div>
+        <ChevronRight aria-hidden="true" className="ml-auto h-5 w-5 shrink-0 text-muted-foreground group-hover:text-acento" />
+      </Link>
       {children}
     </Card>
   )

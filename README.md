@@ -52,4 +52,5 @@ El repositorio está conectado a Vercel: cada push a `main` publica una nueva ve
 | `/juegos` | Buscador de juegos (RAWG) |
 | `/jugadores/:rawgId` | Jugadores que buscan equipo para un juego |
 | `/perfil` | Mi perfil (nivel, disponibilidad, Steam) |
+| `/jugador/:id` | Perfil de otro jugador (sus juegos, horario, Steam y contacto si hay match) |
 | `/solicitudes` | Solicitudes y matches (contacto por Discord al hacer match) |

@@ -56,7 +56,7 @@ export default function Perfil() {
   )
 }
 
-function EstadisticasSteam({ steamId }) {
+export function EstadisticasSteam({ steamId }) {
   const [datos, setDatos] = useState(null)
   const [error, setError] = useState(null)
 
@@ -83,7 +83,7 @@ function EstadisticasSteam({ steamId }) {
       {!error && !datos && <p role="status" className="text-muted-foreground">Cargando estadísticas...</p>}
       {datos?.privado && (
         <p className="text-muted-foreground">
-          La cuenta {datos.nombre} tiene privados los detalles de sus juegos. Hazlos públicos en Steam para ver tus horas.
+          La cuenta {datos.nombre} tiene privados los detalles de sus juegos en Steam, así que no se pueden mostrar sus horas.
         </p>
       )}
       {datos && !datos.privado && (
