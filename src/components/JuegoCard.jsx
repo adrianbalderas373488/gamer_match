@@ -13,7 +13,7 @@ import {
 import { useSesion } from '@/store/sesion'
 import { useMisJuegos } from '@/store/misJuegos'
 
-export default function JuegoCard({ juego }) {
+export default function JuegoCard({ juego, minutosSteam = 0 }) {
   const usuario = useSesion((state) => state.usuario)
   const agregado = useMisJuegos((state) => state.juegos.some((j) => j.rawg_id === juego.id))
   const agregar = useMisJuegos((state) => state.agregar)
@@ -51,6 +51,11 @@ export default function JuegoCard({ juego }) {
         <p className="text-sm text-muted-foreground">
           {[anio, juego.generos.slice(0, 2).join(', ')].filter(Boolean).join(' · ')}
         </p>
+        {minutosSteam > 0 && (
+          <p className="text-sm font-medium text-acento">
+            {(minutosSteam / 60).toLocaleString('es-MX', { maximumFractionDigits: 1 })} h jugadas en Steam
+          </p>
+        )}
 
         <div className="mt-auto flex flex-col gap-2 pt-3">
           <button

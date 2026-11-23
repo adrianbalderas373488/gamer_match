@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { Search, X } from 'lucide-react'
 import { buscarJuegos } from '@/api/rawg'
+import { obtenerPerfil } from '@/api/perfiles'
+import { obtenerEstadisticasSteam } from '@/api/steam'
+import { minutosEnSteam, normalizarNombre, ordenarPorSteam } from '@/lib/ordenSteam'
 import { useSesion } from '@/store/sesion'
 import { useMisJuegos } from '@/store/misJuegos'
 import JuegoCard from './JuegoCard'
@@ -18,6 +21,53 @@ export default function BuscadorJuegos() {
   const errorCarga = useMisJuegos((state) => state.errorCarga)
   const quitar = useMisJuegos((state) => state.quitar)
   const [errorLista, setErrorLista] = useState(null)
+  const [steam, setSteam] = useState({ biblioteca: [], destacados: [], mensaje: 'Consultando tus horas de Steam...' })
+
+  useEffect(() => {
+    let activo = true
+
+    async function cargarSteam() {
+      try {
+        const perfil = await obtenerPerfil(usuario.id)
+        if (!activo) return
+        if (!perfil.steam_id) {
+          setSteam({ biblioteca: [], destacados: [], mensaje: 'Agrega tu Steam ID en Mi perfil para priorizar tus juegos más jugados.' })
+          return
+        }
+        const datos = await obtenerEstadisticasSteam(perfil.steam_id, undefined, true)
+        if (!activo) return
+        if (datos.privado) {
+          setSteam({ biblioteca: [], destacados: [], mensaje: 'Haz públicos los detalles de tus juegos en Steam para ordenarlos por horas jugadas.' })
+          return
+        }
+        // Compatible con la función anterior mientras se publica su actualización.
+        const biblioteca = datos.juegos ?? (datos.topJuegos ?? []).map((j) => ({ nombre: j.nombre, minutos: j.horas * 60 }))
+        setSteam({ biblioteca, destacados: [], mensaje: biblioteca.length ? 'Primero tus juegos con más horas en Steam.' : 'Steam no devolvió juegos para priorizar.' })
+        const masJugados = [...biblioteca].filter((j) => j.minutos > 0).sort((a, b) => b.minutos - a.minutos).slice(0, 10)
+        const destacados = []
+        // Lotes pequeños para limitar las consultas simultáneas a RAWG.
+        for (let i = 0; i < masJugados.length && activo; i += 3) {
+          const resultados = await Promise.all(masJugados.slice(i, i + 3).map(async (juego) => {
+            const { juegos } = await buscarJuegos(juego.nombre)
+            return juegos.find((j) => normalizarNombre(j.nombre) === normalizarNombre(juego.nombre))
+          }))
+          destacados.push(...resultados.filter(Boolean))
+        }
+        if (activo) setSteam({ biblioteca, destacados, mensaje: datos.juegos
+          ? (biblioteca.length ? 'Primero tus juegos con más horas en Steam.' : 'Steam no devolvió juegos para priorizar.')
+          : 'Priorizando tus cinco juegos más jugados; falta actualizar la función de Steam para usar toda tu biblioteca.' })
+      } catch {
+        if (activo) setSteam({ biblioteca: [], destacados: [], mensaje: 'No se pudieron consultar tus horas de Steam. Se muestra el orden habitual.' })
+      }
+    }
+
+    cargarSteam()
+    return () => { activo = false }
+  }, [usuario.id])
+
+  const candidatos = busqueda.trim() ? juegos : [...steam.destacados, ...juegos]
+  const juegosOrdenados = ordenarPorSteam([...new Map(candidatos.map((j) => [j.id, j])).values()], steam.biblioteca)
+  const misJuegosOrdenados = ordenarPorSteam(misJuegos, steam.biblioteca)
 
   // Buscar en RAWG: espera 400 ms después de que el usuario deja de escribir
   useEffect(() => {
@@ -65,7 +115,7 @@ export default function BuscadorJuegos() {
           </p>
         )}
         <ul className="flex flex-wrap gap-2">
-          {misJuegos.map((juego) => (
+          {misJuegosOrdenados.map((juego) => (
             <li key={juego.rawg_id} className="flex items-center overflow-hidden rounded-lg border border-border bg-card">
               <Link
                 to={`/jugadores/${juego.rawg_id}`}
@@ -105,8 +155,9 @@ export default function BuscadorJuegos() {
           />
         </div>
         <p className="mt-2 text-sm text-muted-foreground" role="status">
-          {cargando ? 'Buscando...' : `${juegos.length} resultados`}
+          {cargando ? 'Buscando...' : `${juegosOrdenados.length} resultados`}
         </p>
+        <p className="mt-1 text-sm text-muted-foreground" role="status">{steam.mensaje}</p>
         {respaldo && !cargando && (
           <p className="mt-1 text-sm text-muted-foreground">
             RAWG no respondió; se muestran juegos guardados localmente.
@@ -115,10 +166,10 @@ export default function BuscadorJuegos() {
       </div>
 
       <section aria-label="Resultados" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {juegos.map((juego) => (
-          <JuegoCard juego={juego} key={juego.id} />
+        {juegosOrdenados.map((juego) => (
+          <JuegoCard juego={juego} minutosSteam={minutosEnSteam(juego.nombre, steam.biblioteca)} key={juego.id} />
         ))}
-        {!cargando && juegos.length === 0 && (
+        {!cargando && juegosOrdenados.length === 0 && (
           <p className="col-span-full py-10 text-center text-muted-foreground">No se encontraron juegos con ese nombre.</p>
         )}
       </section>

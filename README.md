@@ -29,6 +29,10 @@ Variables de `.env`:
 
 Sin llave de RAWG la app usa los juegos guardados en `src/data/juegos.json`.
 
+En Juegos se usa el Steam ID guardado en Mi perfil para ordenar el catálogo y la lista «Buscando equipo» por minutos jugados. Sin búsqueda se agregan hasta diez de tus juegos más jugados que tengan coincidencia por nombre en RAWG; al buscar se ordenan los resultados encontrados. Sin Steam ID, con biblioteca privada o si Steam falla, se conserva el orden habitual. Las diferencias de nombre entre catálogos pueden impedir reconocer algunos juegos.
+
+Para usar toda la biblioteca hay que volver a publicar `supabase/functions/steam/index.ts` en la Edge Function `steam`. Mientras siga publicada la versión anterior, se priorizan únicamente los cinco juegos que esa versión devuelve.
+
 ## Configurar Supabase
 
 1. **Base de datos:** en SQL Editor > New query, pegar y correr (Run) cada archivo de `supabase/migrations/` en orden, del `001` al `005`.

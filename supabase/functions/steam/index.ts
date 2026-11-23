@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
   try {
     if (!(await haySesion(req))) return responder({ error: 'Inicia sesión' }, 401)
 
-    const { steamId, juego } = await req.json().catch(() => ({}))
+    const { steamId, juego, incluirBiblioteca } = await req.json().catch(() => ({}))
     if (typeof steamId !== 'string' || !/^7656119\d{10}$/.test(steamId)) {
       return responder({ error: 'Steam ID inválido' }, 400)
     }
@@ -75,6 +75,9 @@ Deno.serve(async (req) => {
         .slice(0, 5)
         .map((j) => ({ nombre: j.name, horas: horas(j.playtime_forever) })),
       horasJuego: encontrado ? horas(encontrado.playtime_forever) : null,
+      ...(incluirBiblioteca === true ? {
+        juegos: juegos.map((j) => ({ nombre: j.name ?? '', minutos: j.playtime_forever ?? 0 })),
+      } : {}),
     })
   } catch (error) {
     console.error(error.message)
