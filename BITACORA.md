@@ -137,11 +137,3 @@ Cómo uso la IA: le pido una parte a la vez, reviso lo que cambia, lo pruebo en 
 **Errores detectados**
 - Al principio solo el nombre llevaba al perfil y no se notaba que se podía picar. Yo intenté picar la foto y no pasaba nada. Le pedí que toda la parte de arriba de la tarjeta (foto, nombre y nivel) fuera el enlace, con una flecha para que se note.
 - Probé el perfil de otros jugadores en el sitio publicado con mis dos cuentas de Discord y funciona.
-
----
-
-## Pendiente antes de la presentación
-
-- [ ] Preparar dos cuentas con un match ya hecho.
-- [ ] Repetir en el sitio publicado uno o dos casos límite (doble clic en Enviar solicitud, juego que no existe).
-- [ ] Practicar un cambio pequeño en vivo con la IA: pedirlo, revisarlo y probarlo.
